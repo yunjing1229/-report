@@ -43,7 +43,7 @@ kp_b, des_b = sift.detectAndCompute(gray_b, None) # 图像b的关键点和描述
 ### 2.3 特征匹配与筛选优质点
 使用 FLANN（Fast Library for Approximate Nearest Neighbors）匹配器对描述符进行匹配。为了排除错误的匹配，使用 Lowe's Ratio Test（阈值取 0.7）。只有当第一匹配的距离显著小于第二匹配距离时，才认为是一个可靠的匹配点。
 
-···
+```
 # 使用 FLANN 匹配器进行特征匹配
 FLANN_INDEX_KDTREE = 1
 index_params = dict(algorithm=FLANN_INDEX_KDTREE, trees=5)
@@ -62,7 +62,7 @@ matched_keypoints_img = cv2.drawMatches(
     img_a, kp_a, img_b, kp_b, good_matches,
     None, flags=cv2.DrawMatchesFlags_NOT_DRAW_SINGLE_POINTS
 )
-···
+```
 
 ### 2.4 估计单应矩阵与计算拼接画布大小
 
