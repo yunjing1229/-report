@@ -85,6 +85,8 @@ for epoch in range(epochs):
     print('epoch:{}, loss:{:.4f}, acc:{:.4f}'.format(epoch, test_loss, acc))
 ```
 ## 实验结果与分析
+<img width="519" height="785" alt="image" src="https://github.com/user-attachments/assets/5a995e42-a08a-4a77-8c34-446705c61285" />
+
 ### 1. 模型结构与参数
 输入层：784个神经元（28×28像素展平）
 
