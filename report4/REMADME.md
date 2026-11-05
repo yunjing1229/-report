@@ -20,6 +20,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 from torchvision import datasets, transforms
 ```
+<img width="675" height="276" alt="image" src="https://github.com/user-attachments/assets/8d4c9620-d464-42f2-b384-8203b42c7cca" />
+
 ### 2.2 数据集加载与预处理
 设置批处理大小（batch_size = 2048），并检测当前设备是否支持CUDA（GPU加速）。通过torchvision.datasets.MNIST下载训练集与测试集，并使用transforms.ToTensor()将图像转换为张量格式。最后使用DataLoader构建数据加载器，设置shuffle=True打乱数据顺序。
 ```
