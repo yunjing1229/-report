@@ -37,6 +37,74 @@ testloader = torch.utils.data.DataLoader(
     batch_size=batch_size, shuffle=True)
 ```
 
+### 3.3 网络定义
+按照参考代码的注释要求，补全 Net 类的各层定义与前向传播过程：
+```
+class Net(nn.Module):
+    def __init__(self):
+        super(Net, self).__init__()
+        # 输入通道1, 输出通道6, 卷积核5x5, padding=2
+        self.conv1 = nn.Conv2d(1, 6, 5, padding=2)
+        # 输入通道6, 输出通道16, 卷积核5x5
+        self.conv2 = nn.Conv2d(6, 16, 5)
+        # 全连接层, 输入5*5*16, 输出120
+        self.fc1 = nn.Linear(5 * 5 * 16, 120)
+        # 全连接层, 输入120, 输出84
+        self.fc2 = nn.Linear(120, 84)
+        # 分类层, 输入84, 输出10
+        self.clf = nn.Linear(84, 10)
+
+    def forward(self, x):
+        # conv1 -> sigmoid -> 平均池化 2x2, stride=2
+        x = F.sigmoid(self.conv1(x))
+        x = F.avg_pool2d(x, kernel_size=2, stride=2)
+        # conv2 -> sigmoid -> 平均池化 2x2, stride=2
+        x = F.sigmoid(self.conv2(x))
+        x = F.avg_pool2d(x, kernel_size=2, stride=2)
+        # 从第1维开始展平
+        x = x.view(x.size(0), -1)
+        # 全连接层1 -> sigmoid
+        x = F.sigmoid(self.fc1(x))
+        # 全连接层2 -> sigmoid
+        x = F.sigmoid(self.fc2(x))
+        # 分类层
+        x = self.clf(x)
+        return x
+```
+### 3.4 模型训练与测试
+模型训练 30 个 epoch，每个 epoch 结束后在测试集上计算平均损失与分类准确率：
+```
+model = Net().to(device)
+optimizer = optim.Adam(model.parameters(), lr=1e-2)
+
+epochs = 30
+accs, losses = [], []
+for epoch in range(epochs):
+    for batch_idx, (x, y) in enumerate(trainloader):
+        x, y = x.to(device), y.to(device)
+        optimizer.zero_grad()
+        out = model(x)
+        loss = F.cross_entropy(out, y)
+        loss.backward()
+        optimizer.step()
+
+    correct = 0
+    testloss = 0
+    with torch.no_grad():
+        for batch_idx, (x, y) in enumerate(testloader):
+            x, y = x.to(device), y.to(device)
+            out = model(x)
+            testloss += F.cross_entropy(out, y).item()
+            pred = out.max(dim=1, keepdim=True)[1]
+            correct += pred.eq(y.view_as(pred)).sum().item()
+
+    acc = correct / len(testloader.dataset)
+    testloss = testloss / (batch_idx + 1)
+    accs.append(acc)
+    losses.append(testloss)
+    print('epoch:{} loss:{:.4f} acc:{:.4f}'.format(epoch, testloss, acc))
+```
+
 
 
 
